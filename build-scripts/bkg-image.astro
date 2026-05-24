@@ -1,0 +1,94 @@
+---
+//utils
+import { getImage } from 'astro:assets';
+import { noCDNAsset } from './util.ts';
+
+interface ImageQuality {
+	screen_width?:number
+	screen_height?:number
+	image_width?:number
+	image_height?:number
+	format?:string
+	quality?:number
+	image?:ImageMetadata
+	noCDN?:boolean
+}
+interface ImageQualityW {
+	screen_width:number
+	image_width:number
+	format?:string
+	quality?:number
+	image?:ImageMetadata
+	noCDN?:boolean
+}
+interface ImageQualityH {
+	screen_height:number
+	image_height:number
+	format?:string
+	quality?:number
+	image?:ImageMetadata
+	noCDN?:boolean
+}
+
+interface Props {
+	css_query:string
+	image?:ImageMetadata
+	mip?:ImageQuality[]
+	format?:string
+	quality?:number
+	extracss?:string
+	noCDN?:boolean
+};
+let { css_query , image = null, mip = null, format = 'webp', quality = 90, extracss, noCDN} = Astro.props;
+async function buildCss(qualities:ImageQuality[], baseQuery:string = '') {
+	return (await Promise.all(
+		qualities.map(async (q, i)=>{
+			const src = q.image?q.image:image;
+			if (src == null)
+				throw 'No image';
+			let query = baseQuery;
+			if (i > 0) {
+				if (baseQuery != '') query += ' and ';
+				if (q.screen_width != null)
+					query += `(min-width: ${q.screen_width}px)`;
+				if (q.screen_height != null)
+					query += `(min-height: ${q.screen_height}px)`;
+			}
+			let url = (await getImage({
+				src,
+				format:q.format?q.format:format,
+				width:q.image_width,
+				height:q.image_height,
+				quality:q.quality?q.quality:quality
+			})).src;
+			if (noCDN || q.noCDN)
+				url = noCDNAsset(url);
+			let r =  `${css_query}{background-image: url('${url}');}`;
+			if (query != '')
+				r = `@media ${query} {${r}}`;
+			return r;
+		})
+	)).join('\n');
+}
+async function buildWithMIP(mip:ImageQuality[]) {
+	const mipw = mip.filter((x)=>x.screen_width) as ImageQualityW[];
+	const miph = mip.filter((x)=>x.screen_height) as ImageQualityH[];
+	if (mipw.length == 0 || miph.length == 0)
+		return await buildCss(mip,'');
+	else
+		return await buildCss(mipw.sort((a,b)=>b.screen_width-a.screen_width), '(orientation: landscape)')+
+			await buildCss(miph.sort((a,b)=>b.screen_height-a.screen_height), '(orientation: portrait)');
+}
+let css = ''
+if (mip != null) {
+	css += buildWithMIP(mip);
+} else {
+	if (image == null)
+		throw 'property Image=null';
+	css += `${css_query}{background-image: url('${(await getImage({src:image,format,quality})).src}');}`;
+}
+
+if (extracss)
+	css += extracss;
+---
+<style set:html={css}></style>

@@ -1,0 +1,15 @@
+{
+	"name":[
+		"PT_BR",
+		"EN_US"
+	],
+	"html":[
+		"pt-br",
+		"en-us"
+	],
+	"default":0,
+	"matrix":[
+		["português", "portuguese"],
+		["inglês",    "english"]
+	]
+}

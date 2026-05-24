@@ -1,0 +1,29 @@
+{
+  "name": "",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=23.0.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "genremap": "node ./build-scripts/genremap.ts",
+    "config": "node ./build-scripts/config.ts",
+    "release": "call build-scripts/build.bat",
+    "postbuild": "node ./build-scripts/postbuild.ts"
+  },
+  "dependencies": {
+    "@playform/compress": "^0.2.3",
+    "@types/node": "^25.9.1",
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
+    "astro": "^6.3.7",
+    "astro-font": "^1.1.0",
+    "astro-pages": "^0.3.1",
+    "browserslist": "^4.28.2",
+    "lightningcss": "^1.32.0",
+    "sass": "^1.100.0"
+  }
+}

@@ -1,0 +1,29 @@
+---
+import favicon_ico from '../assets/favicon/favicon.ico';
+import favicon_svg from '../assets/favicon/favicon.svg';
+import { noCDNAsset } from '../../build-scripts/util';
+
+---
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href={noCDNAsset(favicon_svg.src)} />
+		<link rel="icon" href={noCDNAsset(favicon_ico)} />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro Basics</title>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+
+<style>
+	html,
+	body {
+		margin: 0;
+		width: 100%;
+		height: 100%;
+	}
+</style>
