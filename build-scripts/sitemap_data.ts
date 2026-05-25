@@ -85,7 +85,7 @@ export function genMapLinks(project_root:string, link_folder:string, siteRoots:S
 `---
 import X from "${path.relative(path.join(link_folder, trimPath(key), '..'), page.src).replaceAll('\\','/')}";
 ---
-<X${page.lang?` lang="${page.lang}"`:''}/>
+<X${page.lang?` lang="${page.lang}"`:''} name="${page.iname}"/>
 `		);
 	});
 }
